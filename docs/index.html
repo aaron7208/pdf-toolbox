@@ -138,7 +138,7 @@
     ]
   }
   </script>
-  <script type="module" crossorigin src="./assets/index.4V2MO6bb.js"></script>
+  <script type="module" crossorigin src="./assets/index.CYeqxZAT.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index.CtIcYbGq.css">
 <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
 <body>
@@ -185,6 +185,31 @@
   <div class="container">
     <section class="features-intro">
       <h2>功能</h2>
+      
+      <!-- Search Box -->
+      <div class="feature-search" style="margin-bottom:1.5rem;">
+        <div class="search-input-wrapper" style="position:relative;max-width:600px;margin:0 auto;">
+          <span class="search-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:1.2rem;">🔍</span>
+          <input 
+            type="text" 
+            id="feature-search-input" 
+            placeholder="搜索功能...（例如：合并、压缩、水印）" 
+            style="width:100%;padding:12px 12px 12px 40px;border:2px solid var(--border);border-radius:8px;font-size:1rem;background:var(--bg-secondary);color:var(--text-primary);"
+          >
+          <button 
+            id="search-clear-btn" 
+            style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.2rem;cursor:pointer;display:none;color:var(--text-secondary);"
+          >✕</button>
+        </div>
+        <div id="search-results" style="max-width:600px;margin:0.5rem auto 0;display:none;"></div>
+      </div>
+      
+      <!-- Recently Used Section -->
+      <div id="recently-used-section" style="display:none;margin-bottom:2rem;">
+        <h3 style="font-size:1.1rem;margin-bottom:1rem;color:var(--text-primary);">🕐 最近使用</h3>
+        <div id="recently-used-list" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
+      </div>
+      
       <div class="features-grid">
         <div class="feature-card" data-modal="view" role="button" tabindex="0">
           <div class="feature-icon">👁️</div>
@@ -235,6 +260,26 @@
           <div class="feature-icon">⚡</div>
           <h3>工作流</h3>
           <p>组合多个处理步骤，一键完成。</p>
+        </div>
+        <div class="feature-card" data-modal="page-manager" role="button" tabindex="0">
+          <div class="feature-icon">📄</div>
+          <h3>页面管理</h3>
+          <p>旋转、删除、排序、提取页面。</p>
+        </div>
+        <div class="feature-card" data-modal="encrypt" role="button" tabindex="0">
+          <div class="feature-icon">🔐</div>
+          <h3>加密/解密</h3>
+          <p>为 PDF 添加或移除密码保护。</p>
+        </div>
+        <div class="feature-card" data-modal="page-number" role="button" tabindex="0">
+          <div class="feature-icon">🔢</div>
+          <h3>批量页码</h3>
+          <p>为 PDF 批量添加页码。</p>
+        </div>
+        <div class="feature-card" data-modal="signature" role="button" tabindex="0">
+          <div class="feature-icon">✍️</div>
+          <h3>签名</h3>
+          <p>手绘或上传签名图片到PDF。</p>
         </div>
       </div>
     </section>
@@ -374,6 +419,25 @@
               <span id="compress-pages"></span>
             </div>
           </div>
+
+          <div class="compress-options" style="margin-top:1rem;">
+            <div class="wm-option-group">
+              <label class="wm-option-label">压缩级别：</label>
+              <div class="wm-radio-group">
+                <label><input type="radio" name="compress-level" value="light"> 轻度（保持质量）</label>
+                <label><input type="radio" name="compress-level" value="medium" checked> 中度（推荐）</label>
+                <label><input type="radio" name="compress-level" value="heavy"> 重度（最小体积）</label>
+              </div>
+            </div>
+            <div class="wm-option-group" style="margin-top:8px;">
+              <label class="wm-option-label">高级选项：</label>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                <label><input type="checkbox" id="compress-resample-images" checked> 图像重采样（降低图片DPI）</label>
+                <label><input type="checkbox" id="compress-remove-metadata"> 移除元数据</label>
+              </div>
+            </div>
+          </div>
+
           <div class="btn-group">
             <button class="btn btn-primary" id="compress-btn">压缩并下载</button>
             <button class="btn btn-danger" id="compress-close">✕ 关闭</button>
@@ -1000,6 +1064,342 @@
             <div id="template-manage-list" style="max-height:400px;overflow-y:auto;"></div>
             <div class="btn-group" style="margin-top:1rem;">
               <button class="btn btn-danger" id="pipeline-close">✕ 关闭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE MANAGER MODAL ===== -->
+    <div class="modal-overlay" id="modal-page-manager" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="page-manager">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-page-manager">
+          <div class="card">
+            <h2>📄 PDF 页面管理</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">旋转、删除、排序、提取页面</p>
+            <div class="upload-zone" id="page-manager-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="page-manager-file" accept=".pdf">
+          </div>
+
+          <div class="card" id="page-manager-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="page-manager-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 页数：</span>
+                <span id="page-manager-pages"></span>
+              </div>
+            </div>
+
+            <div class="page-manager-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline" id="pm-rotate-cw" title="顺时针旋转90°">↻ 旋转</button>
+              <button class="btn btn-outline" id="pm-rotate-ccw" title="逆时针旋转90°">↺ 旋转</button>
+              <button class="btn btn-outline" id="pm-delete" title="删除选中页面">🗑️ 删除</button>
+              <button class="btn btn-outline" id="pm-extract" title="提取选中页面为新PDF">📤 提取</button>
+              <button class="btn btn-outline" id="pm-select-all" title="全选">☑️ 全选</button>
+              <button class="btn btn-outline" id="pm-deselect-all" title="取消全选">☐ 取消</button>
+            </div>
+
+            <div class="page-grid" id="page-grid"></div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="pm-save-btn" disabled>保存并下载</button>
+              <button class="btn btn-danger" id="pm-close">✕ 关闭</button>
+            </div>
+            <div id="page-manager-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ENCRYPT MODAL ===== -->
+    <div class="modal-overlay" id="modal-encrypt" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="encrypt">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-encrypt">
+          <div class="card">
+            <h2>🔐 PDF 加密/解密</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">为 PDF 添加密码保护或移除现有密码</p>
+
+            <div class="encrypt-tabs" style="display:flex;gap:8px;margin-bottom:1rem;">
+              <button class="btn btn-outline encrypt-tab active" data-tab="encrypt-tab">添加密码</button>
+              <button class="btn btn-outline encrypt-tab" data-tab="decrypt-tab">移除密码</button>
+            </div>
+
+            <!-- Encrypt Tab -->
+            <div id="encrypt-tab" class="encrypt-panel">
+              <div class="upload-zone" id="encrypt-upload">
+                <div class="icon">📄</div>
+                <p>点击或拖拽上传 PDF 文件</p>
+                <p class="empty-hint">支持 .pdf 格式</p>
+              </div>
+              <input type="file" id="encrypt-file" accept=".pdf">
+
+              <div id="encrypt-card" style="display:none;">
+                <div class="compress-details">
+                  <div class="compress-row">
+                    <span>📄 文件名：</span>
+                    <span id="encrypt-filename"></span>
+                  </div>
+                  <div class="compress-row">
+                    <span>📑 页数：</span>
+                    <span id="encrypt-pages"></span>
+                  </div>
+                </div>
+
+                <div class="encrypt-options" style="margin-top:1rem;">
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="encrypt-user-password">用户密码（打开文件）：</label>
+                    <input type="password" id="encrypt-user-password" class="wm-text-input" placeholder="输入打开文件的密码" required>
+                  </div>
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="encrypt-owner-password">所有者密码（权限控制）：</label>
+                    <input type="password" id="encrypt-owner-password" class="wm-text-input" placeholder="可选，用于限制打印/复制">
+                  </div>
+                  <div class="wm-option-group">
+                    <label class="wm-option-label">权限设置：</label>
+                    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                      <label><input type="checkbox" id="encrypt-allow-printing" checked> 允许打印</label>
+                      <label><input type="checkbox" id="encrypt-allow-copying" checked> 允许复制内容</label>
+                      <label><input type="checkbox" id="encrypt-allow-modifying" checked> 允许修改</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="btn-group" style="margin-top:1rem;">
+                  <button class="btn btn-primary" id="encrypt-btn" disabled>加密并下载</button>
+                  <button class="btn btn-danger" id="encrypt-close">✕ 关闭</button>
+                </div>
+                <div id="encrypt-status"></div>
+              </div>
+            </div>
+
+            <!-- Decrypt Tab -->
+            <div id="decrypt-tab" class="encrypt-panel" style="display:none;">
+              <div class="upload-zone" id="decrypt-upload">
+                <div class="icon">🔒</div>
+                <p>点击或拖拽上传加密的 PDF 文件</p>
+                <p class="empty-hint">需要提供密码才能解密</p>
+              </div>
+              <input type="file" id="decrypt-file" accept=".pdf">
+
+              <div id="decrypt-card" style="display:none;">
+                <div class="compress-details">
+                  <div class="compress-row">
+                    <span>📄 文件名：</span>
+                    <span id="decrypt-filename"></span>
+                  </div>
+                </div>
+
+                <div class="wm-option-group" style="margin-top:1rem;">
+                  <label class="wm-option-label" for="decrypt-password">密码：</label>
+                  <input type="password" id="decrypt-password" class="wm-text-input" placeholder="输入PDF密码" required>
+                </div>
+
+                <div class="btn-group" style="margin-top:1rem;">
+                  <button class="btn btn-primary" id="decrypt-btn" disabled>解密并下载</button>
+                  <button class="btn btn-danger" id="decrypt-close">✕ 关闭</button>
+                </div>
+                <div id="decrypt-status"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE NUMBER MODAL ===== -->
+    <div class="modal-overlay" id="modal-page-number" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="page-number">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-page-number">
+          <div class="card">
+            <h2>🔢 批量添加页码</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">为 PDF 批量添加页码，支持自定义格式</p>
+            <div class="upload-zone" id="page-number-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="page-number-file" accept=".pdf">
+
+            <div class="card" id="page-number-card" style="display:none;">
+              <div class="compress-details">
+                <div class="compress-row">
+                  <span>📄 文件名：</span>
+                  <span id="page-number-filename"></span>
+                </div>
+                <div class="compress-row">
+                  <span>📑 页数：</span>
+                  <span id="page-number-pages"></span>
+                </div>
+              </div>
+
+              <div class="page-number-options" style="margin-top:1rem;">
+                <div class="wm-option-group">
+                  <label class="wm-option-label" for="pn-format">页码格式：</label>
+                  <select id="pn-format" class="img-select">
+                    <option value="simple">简单数字（1, 2, 3...）</option>
+                    <option value="with-total">带总页数（1/10, 2/10...）</option>
+                    <option value="chinese">中文格式（第1页，第2页...）</option>
+                    <option value="chinese-total">中文完整（第1页/共10页）</option>
+                  </select>
+                </div>
+
+                <div class="wm-option-row">
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="pn-position">位置：</label>
+                    <select id="pn-position" class="img-select">
+                      <option value="bottom-center">底部居中</option>
+                      <option value="bottom-left">底部左侧</option>
+                      <option value="bottom-right">底部右侧</option>
+                      <option value="top-center">顶部居中</option>
+                      <option value="top-left">顶部左侧</option>
+                      <option value="top-right">顶部右侧</option>
+                    </select>
+                  </div>
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="pn-fontsize">字号：</label>
+                    <input type="range" id="pn-fontsize" class="wm-range" min="8" max="24" value="12">
+                    <span class="wm-range-value" id="pn-fontsize-val">12</span>
+                  </div>
+                </div>
+
+                <div class="wm-option-row">
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="pn-color">颜色：</label>
+                    <input type="color" id="pn-color" value="#000000" class="wm-color-input">
+                  </div>
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="pn-start">起始页码：</label>
+                    <input type="number" id="pn-start" class="wm-text-input" value="1" min="1" style="width:80px;">
+                  </div>
+                </div>
+
+                <div class="wm-option-group">
+                  <label class="wm-option-label" for="pn-font-upload">中文字体（可选，上传 .ttf 文件）：</label>
+                  <input type="file" id="pn-font-upload" accept=".ttf,.otf" class="wm-file-input">
+                  <p class="wm-hint">💡 如需中文页码，请上传中文字体文件。</p>
+                </div>
+              </div>
+
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="pn-apply-btn" disabled>添加页码并下载</button>
+                <button class="btn btn-danger" id="pn-close">✕ 关闭</button>
+              </div>
+              <div id="page-number-status"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SIGNATURE MODAL ===== -->
+    <div class="modal-overlay" id="modal-signature" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="signature">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-signature">
+          <div class="card">
+            <h2>✍️ PDF 签名</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">手绘签名或上传图片签名，放置到PDF指定位置</p>
+            
+            <div class="signature-tabs" style="display:flex;gap:8px;margin-bottom:1rem;">
+              <button class="btn btn-outline signature-tab active" data-tab="sig-draw-tab">手绘签名</button>
+              <button class="btn btn-outline signature-tab" data-tab="sig-upload-tab">上传签名</button>
+              <button class="btn btn-outline signature-tab" data-tab="sig-library-tab">签名库</button>
+            </div>
+
+            <div id="sig-draw-tab" class="signature-panel">
+              <div class="signature-draw-container" style="border:2px solid var(--border);border-radius:8px;background:white;">
+                <canvas id="signature-canvas" width="600" height="200" style="width:100%;cursor:crosshair;display:block;"></canvas>
+              </div>
+              <div style="margin-top:0.5rem;display:flex;gap:8px;">
+                <button class="btn btn-outline" id="sig-clear-canvas">清除</button>
+                <button class="btn btn-outline" id="sig-undo">撤销</button>
+                <button class="btn btn-outline" id="sig-save-to-library">保存到签名库</button>
+              </div>
+            </div>
+
+            <div id="sig-upload-tab" class="signature-panel" style="display:none;">
+              <div class="upload-zone" id="sig-upload-zone">
+                <div class="icon">🖼️</div>
+                <p>点击或拖拽上传签名图片（PNG/JPG）</p>
+                <p class="empty-hint">建议使用透明背景的PNG图片</p>
+              </div>
+              <input type="file" id="sig-upload-file" accept="image/png,image/jpeg,image/jpg">
+              <div id="sig-upload-preview" style="display:none;margin-top:1rem;text-align:center;">
+                <img id="sig-preview-img" style="max-width:300px;border:1px solid var(--border);border-radius:4px;">
+                <div style="margin-top:0.5rem;">
+                  <button class="btn btn-outline" id="sig-save-upload-to-library">保存到签名库</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="sig-library-tab" class="signature-panel" style="display:none;">
+              <div id="sig-library-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
+                <p style="color:var(--text-secondary);grid-column:1/-1;text-align:center;">暂无保存的签名，请先手绘或上传签名并保存到签名库。</p>
+              </div>
+            </div>
+
+            <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;">
+              <h3 style="font-size:1rem;margin-bottom:0.75rem;">将签名添加到PDF：</h3>
+              
+              <div class="upload-zone" id="sig-pdf-upload">
+                <div class="icon">📄</div>
+                <p>点击或拖拽上传 PDF 文件</p>
+                <p class="empty-hint">支持 .pdf 格式</p>
+              </div>
+              <input type="file" id="sig-pdf-file" accept=".pdf">
+
+              <div id="sig-pdf-card" style="display:none;">
+                <div class="compress-details">
+                  <div class="compress-row">
+                    <span>📄 文件名：</span>
+                    <span id="sig-pdf-filename"></span>
+                  </div>
+                  <div class="compress-row">
+                    <span>📑 页数：</span>
+                    <span id="sig-pdf-pages"></span>
+                  </div>
+                </div>
+
+                <div class="sig-options" style="margin-top:1rem;">
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="sig-page">签名所在页面：</label>
+                    <input type="number" id="sig-page" class="wm-text-input" value="1" min="1" style="width:100px;">
+                  </div>
+                  <div class="wm-option-row">
+                    <div class="wm-option-group">
+                      <label class="wm-option-label" for="sig-x">水平位置（X）：</label>
+                      <input type="range" id="sig-x" class="wm-range" min="0" max="500" value="100">
+                      <span class="wm-range-value" id="sig-x-val">100</span>
+                    </div>
+                    <div class="wm-option-group">
+                      <label class="wm-option-label" for="sig-y">垂直位置（Y）：</label>
+                      <input type="range" id="sig-y" class="wm-range" min="0" max="700" value="100">
+                      <span class="wm-range-value" id="sig-y-val">100</span>
+                    </div>
+                  </div>
+                  <div class="wm-option-group">
+                    <label class="wm-option-label" for="sig-scale">签名大小：</label>
+                    <input type="range" id="sig-scale" class="wm-range" min="10" max="200" value="100">
+                    <span class="wm-range-value" id="sig-scale-val">100%</span>
+                  </div>
+                </div>
+
+                <div class="btn-group" style="margin-top:1rem;">
+                  <button class="btn btn-primary" id="sig-apply-btn" disabled>添加签名并下载</button>
+                  <button class="btn btn-danger" id="sig-close">✕ 关闭</button>
+                </div>
+                <div id="sig-status"></div>
+              </div>
             </div>
           </div>
         </div>
