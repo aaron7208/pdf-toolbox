@@ -1,0 +1,1 @@
+{"name":"PDF 工具箱","short_name":"PDF工具箱","description":"纯前端 PDF 工具箱：合并、压缩、拆分、转图片、加水印。所有处理在浏览器中完成，文件不上传服务器。","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#4f46e5","lang":"en","scope":"./","icons":[{"src":"/pwa-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/pwa-512x512.png","sizes":"512x512","type":"image/png"}]}
