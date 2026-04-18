@@ -300,6 +300,16 @@
           <h3>倒序排列</h3>
           <p>将 PDF 页面顺序完全倒转。</p>
         </div>
+        <div class="feature-card" data-modal="page-reorder" role="button" tabindex="0">
+          <div class="feature-icon">🔀</div>
+          <h3>页面重排</h3>
+          <p>拖拽调整 PDF 页面顺序。</p>
+        </div>
+        <div class="feature-card" data-modal="split-equal" role="button" tabindex="0">
+          <div class="feature-icon">✂️</div>
+          <h3>等份分割</h3>
+          <p>将 PDF 平均分割为多个文件。</p>
+        </div>
       </div>
     </section>
 
@@ -1632,6 +1642,109 @@
               </div>
               <div id="reverse-order-status"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE REORDER MODAL ===== -->
+    <div class="modal-overlay" id="modal-page-reorder" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="page-reorder">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-page-reorder">
+          <div class="card">
+            <h2>🔀 页面重排</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">拖拽调整页面顺序，导出为新 PDF</p>
+            <div class="upload-zone" id="page-reorder-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="page-reorder-file" accept=".pdf" style="display:none;">
+          </div>
+
+          <div class="card" id="page-reorder-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="page-reorder-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 页数：</span>
+                <span id="page-reorder-pages"></span>
+              </div>
+            </div>
+
+            <div style="margin:1rem 0;padding:8px;background:var(--bg-secondary);border-radius:8px;">
+              <p style="font-size:0.85rem;color:var(--text-secondary);">💡 拖拽页面缩略图调整顺序</p>
+            </div>
+
+            <div class="page-grid" id="pr-page-grid"></div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="pr-save-btn">💾 保存并下载</button>
+              <button class="btn btn-outline" id="pr-close">✕ 关闭</button>
+            </div>
+            <div id="page-reorder-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SPLIT EQUAL MODAL ===== -->
+    <div class="modal-overlay" id="modal-split-equal" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="split-equal">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-split-equal">
+          <div class="card">
+            <h2>✂️ 等份分割 PDF</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">将 PDF 平均分割为多个文件，打包下载</p>
+            <div class="upload-zone" id="split-equal-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="split-equal-file" accept=".pdf" style="display:none;">
+          </div>
+
+          <div class="card" id="split-equal-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="split-equal-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 总页数：</span>
+                <span id="split-equal-pages"></span>
+              </div>
+            </div>
+
+            <div class="split-equal-options" style="margin:1rem 0;">
+              <div class="wm-option-group">
+                <label class="wm-option-label">分割方式：</label>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                  <label style="display:flex;align-items:center;gap:8px;">
+                    <input type="radio" name="split-mode" value="by-count" checked> 按文件数量（如分成 3 个文件）
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;">
+                    <input type="radio" name="split-mode" value="by-pages"> 按每份页数（如每个文件 5 页）
+                  </label>
+                </div>
+              </div>
+              <div class="wm-option-group" style="margin-top:12px;">
+                <label class="wm-option-label" for="split-equal-value">
+                  <span id="split-equal-label">文件数量：</span>
+                </label>
+                <input type="number" id="split-equal-value" class="wm-text-input" value="2" min="2" style="width:100px;">
+              </div>
+              <div id="split-equal-preview" style="margin-top:12px;padding:12px;background:var(--bg-secondary);border-radius:8px;font-size:0.85rem;color:var(--text-secondary);"></div>
+            </div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="split-equal-btn">📦 分割并下载 ZIP</button>
+              <button class="btn btn-outline" id="split-equal-close">✕ 关闭</button>
+            </div>
+            <div id="split-equal-status"></div>
           </div>
         </div>
       </div>

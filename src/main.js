@@ -24,6 +24,8 @@ import { initBatchExtract } from './modules/batch-extract.js'
 import { initBatchDelete } from './modules/batch-delete.js'
 import { initBatchRotate } from './modules/batch-rotate.js'
 import { initReverseOrder } from './modules/reverse-order.js'
+import { initPageReorder } from './modules/page-reorder.js'
+import { initSplitEqual } from './modules/split-equal.js'
 
 // Web Worker client
 import { initWorker } from './worker-client.js'
@@ -376,4 +378,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initBatchDelete()
   initBatchRotate()
   initReverseOrder()
+  initPageReorder()
+  initSplitEqual()
 })
