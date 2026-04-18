@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://aaron7208.github.io/pdf-toolbox/sitemap.xml
