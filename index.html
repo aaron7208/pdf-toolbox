@@ -263,7 +263,12 @@
         <div class="feature-card" data-modal="page-manager" role="button" tabindex="0">
           <div class="feature-icon">📄</div>
           <h3>页面管理</h3>
-          <p>旋转、删除、排序、提取页面。</p>
+          <p>旋转、删除、排序、提取、倒序页面。</p>
+        </div>
+        <div class="feature-card" data-modal="split" role="button" tabindex="0">
+          <div class="feature-icon">✂️</div>
+          <h3>拆分 PDF</h3>
+          <p>按范围/等份/奇偶页拆分 PDF。</p>
         </div>
         <div class="feature-card" data-modal="encrypt" role="button" tabindex="0">
           <div class="feature-icon">🔐</div>
@@ -280,35 +285,50 @@
           <h3>签名</h3>
           <p>手绘或上传签名图片到PDF。</p>
         </div>
-        <div class="feature-card" data-modal="batch-extract" role="button" tabindex="0">
+        <div class="feature-card" data-modal="batch-extract" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">📤</div>
           <h3>批量提取</h3>
           <p>从 PDF 中提取多个页面为独立文件。</p>
         </div>
-        <div class="feature-card" data-modal="batch-delete" role="button" tabindex="0">
+        <div class="feature-card" data-modal="batch-delete" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">🗑️</div>
           <h3>批量删除</h3>
           <p>删除 PDF 中指定的页面。</p>
         </div>
-        <div class="feature-card" data-modal="batch-rotate" role="button" tabindex="0">
+        <div class="feature-card" data-modal="batch-rotate" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">🔄</div>
           <h3>批量旋转</h3>
           <p>旋转 PDF 中的指定页面。</p>
         </div>
-        <div class="feature-card" data-modal="reverse-order" role="button" tabindex="0">
+        <div class="feature-card" data-modal="reverse-order" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">🔃</div>
           <h3>倒序排列</h3>
           <p>将 PDF 页面顺序完全倒转。</p>
         </div>
-        <div class="feature-card" data-modal="page-reorder" role="button" tabindex="0">
+        <div class="feature-card" data-modal="page-reorder" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">🔀</div>
           <h3>页面重排</h3>
           <p>拖拽调整 PDF 页面顺序。</p>
         </div>
-        <div class="feature-card" data-modal="split-equal" role="button" tabindex="0">
+        <div class="feature-card" data-modal="split-equal" role="button" tabindex="0" style="display:none;">
           <div class="feature-icon">✂️</div>
           <h3>等份分割</h3>
           <p>将 PDF 平均分割为多个文件。</p>
+        </div>
+        <div class="feature-card" data-modal="insert-blank" role="button" tabindex="0" style="display:none;">
+          <div class="feature-icon">📄</div>
+          <h3>插入空白页</h3>
+          <p>在 PDF 中插入空白页。</p>
+        </div>
+        <div class="feature-card" data-modal="odd-even-split" role="button" tabindex="0" style="display:none;">
+          <div class="feature-icon">🔢</div>
+          <h3>奇偶页分离</h3>
+          <p>分离 PDF 的奇数页和偶数页。</p>
+        </div>
+        <div class="feature-card" data-modal="batch-replace" role="button" tabindex="0" style="display:none;">
+          <div class="feature-icon">🔄</div>
+          <h3>批量替换</h3>
+          <p>用其他 PDF 页面替换指定页面。</p>
         </div>
       </div>
     </section>
@@ -1127,19 +1147,78 @@
               </div>
             </div>
 
-            <div class="page-manager-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-outline" id="pm-rotate-cw" title="顺时针旋转90°">↻ 旋转</button>
-              <button class="btn btn-outline" id="pm-rotate-ccw" title="逆时针旋转90°">↺ 旋转</button>
-              <button class="btn btn-outline" id="pm-delete" title="删除选中页面">🗑️ 删除</button>
-              <button class="btn btn-outline" id="pm-extract" title="提取选中页面为新PDF">📤 提取</button>
-              <button class="btn btn-outline" id="pm-select-all" title="全选">☑️ 全选</button>
-              <button class="btn btn-outline" id="pm-deselect-all" title="取消全选">☐ 取消</button>
+            <div class="page-manager-tabs" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline pm-tab active" data-tab="pm-rotate-tab">🔄 旋转</button>
+              <button class="btn btn-outline pm-tab" data-tab="pm-delete-tab">🗑️ 删除</button>
+              <button class="btn btn-outline pm-tab" data-tab="pm-reorder-tab">🔀 排序</button>
+              <button class="btn btn-outline pm-tab" data-tab="pm-extract-tab">📤 提取</button>
+              <button class="btn btn-outline pm-tab" data-tab="pm-reverse-tab">🔃 倒序</button>
             </div>
 
-            <div class="page-grid" id="page-grid"></div>
+            <div id="pm-rotate-tab" class="pm-panel">
+              <div class="wm-option-group">
+                <label class="wm-option-label">旋转角度：</label>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                  <label><input type="radio" name="pm-rotate-angle" value="90" checked> 90° 顺时针</label>
+                  <label><input type="radio" name="pm-rotate-angle" value="180"> 180°</label>
+                  <label><input type="radio" name="pm-rotate-angle" value="270"> 270° 顺时针</label>
+                </div>
+              </div>
+              <div class="page-manager-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-outline" id="pm-select-all">☑️ 全选</button>
+                <button class="btn btn-outline" id="pm-deselect-all">☐ 取消</button>
+              </div>
+              <div class="page-grid" id="pm-rotate-grid"></div>
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="pm-rotate-btn">🔄 旋转并保存</button>
+              </div>
+            </div>
+
+            <div id="pm-delete-tab" class="pm-panel" style="display:none;">
+              <div class="page-manager-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-outline" id="pm-delete-select-all">☑️ 全选</button>
+                <button class="btn btn-outline" id="pm-delete-deselect-all">☐ 取消</button>
+                <button class="btn btn-outline" id="pm-delete-invert">🔄 反选</button>
+              </div>
+              <div class="page-grid" id="pm-delete-grid"></div>
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-danger" id="pm-delete-btn">🗑️ 删除并保存</button>
+              </div>
+            </div>
+
+            <div id="pm-reorder-tab" class="pm-panel" style="display:none;">
+              <div style="margin:1rem 0;padding:8px;background:var(--bg-secondary);border-radius:8px;">
+                <p style="font-size:0.85rem;color:var(--text-secondary);">💡 拖拽页面缩略图调整顺序</p>
+              </div>
+              <div class="page-grid" id="pm-reorder-grid"></div>
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="pm-reorder-btn">💾 保存新顺序</button>
+              </div>
+            </div>
+
+            <div id="pm-extract-tab" class="pm-panel" style="display:none;">
+              <div class="page-manager-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-outline" id="pm-extract-select-all">☑️ 全选</button>
+                <button class="btn btn-outline" id="pm-extract-deselect-all">☐ 取消</button>
+                <button class="btn btn-outline" id="pm-extract-invert">🔄 反选</button>
+              </div>
+              <div class="page-grid" id="pm-extract-grid"></div>
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="pm-extract-btn">📦 提取并下载 ZIP</button>
+              </div>
+            </div>
+
+            <div id="pm-reverse-tab" class="pm-panel" style="display:none;">
+              <div style="margin:2rem 0;text-align:center;">
+                <p style="font-size:1.1rem;margin-bottom:1rem;">将所有页面顺序完全倒转</p>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">最后一页变第一页，依此类推</p>
+              </div>
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="pm-reverse-btn">🔃 倒序并下载</button>
+              </div>
+            </div>
 
             <div class="btn-group" style="margin-top:1rem;">
-              <button class="btn btn-primary" id="pm-save-btn" disabled>保存并下载</button>
               <button class="btn btn-danger" id="pm-close">✕ 关闭</button>
             </div>
             <div id="page-manager-status"></div>
