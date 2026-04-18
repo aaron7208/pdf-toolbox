@@ -11,12 +11,20 @@ import { showStatus, downloadBlob, resetUploadZone } from '../utils.js'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 function setupUploadZone(uploadZoneId, fileInputId, handler) {
+  console.log(`[PageNumber] Setting up upload zone: ${uploadZoneId}`)
   const uploadZone = document.getElementById(uploadZoneId)
   const fileInput = document.getElementById(fileInputId)
   
+  console.log(`[PageNumber] uploadZone:`, uploadZone)
+  console.log(`[PageNumber] fileInput:`, fileInput)
+  
   if (uploadZone && fileInput) {
-    uploadZone.addEventListener('click', () => fileInput.click())
+    uploadZone.addEventListener('click', () => {
+      console.log(`[PageNumber] ${uploadZoneId} clicked`)
+      fileInput.click()
+    })
     fileInput.addEventListener('change', (e) => {
+      console.log(`[PageNumber] File selected:`, e.target.files[0])
       if (e.target.files.length > 0) {
         handler(e.target.files[0])
       }
@@ -38,6 +46,9 @@ function setupUploadZone(uploadZoneId, fileInputId, handler) {
         handler(e.dataTransfer.files[0])
       }
     })
+    console.log(`[PageNumber] Upload zone ${uploadZoneId} set up successfully`)
+  } else {
+    console.error(`[PageNumber] uploadZone or fileInput not found for ${uploadZoneId}!`)
   }
 }
 

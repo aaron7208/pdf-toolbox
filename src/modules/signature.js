@@ -12,12 +12,20 @@ import { showStatus, downloadBlob, resetUploadZone } from '../utils.js'
 import { PDFDocument } from 'pdf-lib'
 
 function setupUploadZone(uploadZoneId, fileInputId, handler) {
+  console.log(`[Signature] Setting up upload zone: ${uploadZoneId}`)
   const uploadZone = document.getElementById(uploadZoneId)
   const fileInput = document.getElementById(fileInputId)
   
+  console.log(`[Signature] uploadZone:`, uploadZone)
+  console.log(`[Signature] fileInput:`, fileInput)
+  
   if (uploadZone && fileInput) {
-    uploadZone.addEventListener('click', () => fileInput.click())
+    uploadZone.addEventListener('click', () => {
+      console.log(`[Signature] ${uploadZoneId} clicked`)
+      fileInput.click()
+    })
     fileInput.addEventListener('change', (e) => {
+      console.log(`[Signature] File selected for ${uploadZoneId}:`, e.target.files[0])
       if (e.target.files.length > 0) {
         handler(e.target.files[0])
       }
@@ -39,6 +47,9 @@ function setupUploadZone(uploadZoneId, fileInputId, handler) {
         handler(e.dataTransfer.files[0])
       }
     })
+    console.log(`[Signature] Upload zone ${uploadZoneId} set up successfully`)
+  } else {
+    console.error(`[Signature] uploadZone or fileInput not found for ${uploadZoneId}!`)
   }
 }
 

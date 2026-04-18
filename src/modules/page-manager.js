@@ -22,12 +22,21 @@ let pageOrder = []
 let selectedPages = new Set()
 
 export function initPageManager() {
+  console.log('[PageManager] Initializing...')
   const uploadZone = document.getElementById('page-manager-upload')
   const fileInput = document.getElementById('page-manager-file')
   
+  console.log('[PageManager] uploadZone:', uploadZone)
+  console.log('[PageManager] fileInput:', fileInput)
+  
   if (uploadZone && fileInput) {
-    uploadZone.addEventListener('click', () => fileInput.click())
+    console.log('[PageManager] Setting up event listeners...')
+    uploadZone.addEventListener('click', () => {
+      console.log('[PageManager] Upload zone clicked')
+      fileInput.click()
+    })
     fileInput.addEventListener('change', (e) => {
+      console.log('[PageManager] File selected:', e.target.files[0])
       if (e.target.files.length > 0) {
         handleFileSelect(e.target.files[0])
       }
@@ -49,6 +58,9 @@ export function initPageManager() {
         handleFileSelect(e.dataTransfer.files[0])
       }
     })
+    console.log('[PageManager] Event listeners set up successfully')
+  } else {
+    console.error('[PageManager] uploadZone or fileInput not found!')
   }
   
   const rotateCwBtn = document.getElementById('pm-rotate-cw')

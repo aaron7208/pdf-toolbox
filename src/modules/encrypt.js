@@ -14,12 +14,20 @@ let encryptPdfBytes = null
 let encryptFileName = ''
 
 function setupUploadZone(uploadZoneId, fileInputId, handler) {
+  console.log(`[Encrypt] Setting up upload zone: ${uploadZoneId}`)
   const uploadZone = document.getElementById(uploadZoneId)
   const fileInput = document.getElementById(fileInputId)
   
+  console.log(`[Encrypt] uploadZone:`, uploadZone)
+  console.log(`[Encrypt] fileInput:`, fileInput)
+  
   if (uploadZone && fileInput) {
-    uploadZone.addEventListener('click', () => fileInput.click())
+    uploadZone.addEventListener('click', () => {
+      console.log(`[Encrypt] ${uploadZoneId} clicked`)
+      fileInput.click()
+    })
     fileInput.addEventListener('change', (e) => {
+      console.log(`[Encrypt] File selected for ${uploadZoneId}:`, e.target.files[0])
       if (e.target.files.length > 0) {
         handler(e.target.files[0])
       }
@@ -41,6 +49,9 @@ function setupUploadZone(uploadZoneId, fileInputId, handler) {
         handler(e.dataTransfer.files[0])
       }
     })
+    console.log(`[Encrypt] Upload zone ${uploadZoneId} set up successfully`)
+  } else {
+    console.error(`[Encrypt] uploadZone or fileInput not found for ${uploadZoneId}!`)
   }
 }
 
