@@ -285,6 +285,21 @@
           <h3>批量提取</h3>
           <p>从 PDF 中提取多个页面为独立文件。</p>
         </div>
+        <div class="feature-card" data-modal="batch-delete" role="button" tabindex="0">
+          <div class="feature-icon">🗑️</div>
+          <h3>批量删除</h3>
+          <p>删除 PDF 中指定的页面。</p>
+        </div>
+        <div class="feature-card" data-modal="batch-rotate" role="button" tabindex="0">
+          <div class="feature-icon">🔄</div>
+          <h3>批量旋转</h3>
+          <p>旋转 PDF 中的指定页面。</p>
+        </div>
+        <div class="feature-card" data-modal="reverse-order" role="button" tabindex="0">
+          <div class="feature-icon">🔃</div>
+          <h3>倒序排列</h3>
+          <p>将 PDF 页面顺序完全倒转。</p>
+        </div>
       </div>
     </section>
 
@@ -1456,6 +1471,167 @@
               <button class="btn btn-danger" id="be-close">✕ 关闭</button>
             </div>
             <div id="batch-extract-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BATCH DELETE MODAL ===== -->
+    <div class="modal-overlay" id="modal-batch-delete" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="batch-delete">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-batch-delete">
+          <div class="card">
+            <h2>🗑️ 批量删除页面</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">选择要删除的页面，导出剩余页面为新 PDF</p>
+            <div class="upload-zone" id="batch-delete-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="batch-delete-file" accept=".pdf" style="display:none;">
+          </div>
+
+          <div class="card" id="batch-delete-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="batch-delete-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 总页数：</span>
+                <span id="batch-delete-pages"></span>
+              </div>
+              <div class="compress-row">
+                <span>❌ 将删除：</span>
+                <span id="batch-delete-selected">0 页</span>
+              </div>
+              <div class="compress-row">
+                <span>✅ 剩余：</span>
+                <span id="batch-delete-remaining">0 页</span>
+              </div>
+            </div>
+
+            <div class="batch-delete-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline" id="bd-select-all">☑️ 全选</button>
+              <button class="btn btn-outline" id="bd-deselect-all">☐ 取消全选</button>
+              <button class="btn btn-outline" id="bd-invert-selection">🔄 反选</button>
+              <button class="btn btn-outline" id="bd-select-range">🔢 选择范围</button>
+            </div>
+
+            <div class="page-grid" id="bd-page-grid"></div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-danger" id="bd-delete-btn" disabled>🗑️ 删除并下载</button>
+              <button class="btn btn-outline" id="bd-close">✕ 关闭</button>
+            </div>
+            <div id="batch-delete-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BATCH ROTATE MODAL ===== -->
+    <div class="modal-overlay" id="modal-batch-rotate" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="batch-rotate">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-batch-rotate">
+          <div class="card">
+            <h2>🔄 批量旋转页面</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">选择要旋转的页面，统一旋转角度</p>
+            <div class="upload-zone" id="batch-rotate-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="batch-rotate-file" accept=".pdf" style="display:none;">
+          </div>
+
+          <div class="card" id="batch-rotate-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="batch-rotate-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 总页数：</span>
+                <span id="batch-rotate-pages"></span>
+              </div>
+              <div class="compress-row">
+                <span>🔄 将旋转：</span>
+                <span id="batch-rotate-selected">0 页</span>
+              </div>
+            </div>
+
+            <div class="batch-rotate-options" style="margin:1rem 0;">
+              <div class="wm-option-group">
+                <label class="wm-option-label">旋转角度：</label>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                  <label style="display:flex;align-items:center;gap:4px;">
+                    <input type="radio" name="rotate-angle" value="90" checked> 90° 顺时针
+                  </label>
+                  <label style="display:flex;align-items:center;gap:4px;">
+                    <input type="radio" name="rotate-angle" value="180"> 180°
+                  </label>
+                  <label style="display:flex;align-items:center;gap:4px;">
+                    <input type="radio" name="rotate-angle" value="270"> 270° 顺时针
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="batch-rotate-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline" id="br-select-all">☑️ 全选</button>
+              <button class="btn btn-outline" id="br-deselect-all">☐ 取消全选</button>
+              <button class="btn btn-outline" id="br-invert-selection">🔄 反选</button>
+              <button class="btn btn-outline" id="br-select-range">🔢 选择范围</button>
+            </div>
+
+            <div class="page-grid" id="br-page-grid"></div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="br-rotate-btn" disabled>🔄 旋转并下载</button>
+              <button class="btn btn-outline" id="br-close">✕ 关闭</button>
+            </div>
+            <div id="batch-rotate-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== REVERSE ORDER MODAL ===== -->
+    <div class="modal-overlay" id="modal-reverse-order" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="reverse-order">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-reverse-order">
+          <div class="card">
+            <h2>🔃 倒序排列页面</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">将 PDF 页面顺序完全倒转（最后一页变第一页）</p>
+            <div class="upload-zone" id="reverse-order-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="reverse-order-file" accept=".pdf" style="display:none;">
+
+            <div id="reverse-order-card" style="display:none;margin-top:1rem;">
+              <div class="compress-details">
+                <div class="compress-row">
+                  <span>📄 文件名：</span>
+                  <span id="reverse-order-filename"></span>
+                </div>
+                <div class="compress-row">
+                  <span>📑 页数：</span>
+                  <span id="reverse-order-pages"></span>
+                </div>
+              </div>
+
+              <div class="btn-group" style="margin-top:1rem;">
+                <button class="btn btn-primary" id="reverse-order-btn">🔃 倒序并下载</button>
+                <button class="btn btn-outline" id="reverse-order-close">✕ 关闭</button>
+              </div>
+              <div id="reverse-order-status"></div>
+            </div>
           </div>
         </div>
       </div>
