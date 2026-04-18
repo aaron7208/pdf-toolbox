@@ -146,6 +146,15 @@ function initThemeToggle() {
       if (!window.__safeMode) localStorage.setItem('pdf-toolbox-theme', 'dark')
     }
     updateIcon()
+    
+    // 强制重绘所有 modal 以应用新主题
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      if (modal.classList.contains('open')) {
+        modal.style.display = 'none'
+        modal.offsetHeight // 触发重排
+        modal.style.display = ''
+      }
+    })
   })
 }
 
