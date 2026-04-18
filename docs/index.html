@@ -137,7 +137,7 @@
       }
     ]
   }
-  </script>
+  </script>
   <script type="module" crossorigin src="./assets/index.CYeqxZAT.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index.CtIcYbGq.css">
 <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
@@ -1083,7 +1083,7 @@
               <p>点击或拖拽上传 PDF 文件</p>
               <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
             </div>
-            <input type="file" id="page-manager-file" accept=".pdf">
+            <input type="file" id="page-manager-file" accept=".pdf" style="display:none;">
           </div>
 
           <div class="card" id="page-manager-card" style="display:none;">
@@ -1140,7 +1140,7 @@
                 <p>点击或拖拽上传 PDF 文件</p>
                 <p class="empty-hint">支持 .pdf 格式</p>
               </div>
-              <input type="file" id="encrypt-file" accept=".pdf">
+              <input type="file" id="encrypt-file" accept=".pdf" style="display:none;">
 
               <div id="encrypt-card" style="display:none;">
                 <div class="compress-details">
@@ -1188,7 +1188,7 @@
                 <p>点击或拖拽上传加密的 PDF 文件</p>
                 <p class="empty-hint">需要提供密码才能解密</p>
               </div>
-              <input type="file" id="decrypt-file" accept=".pdf">
+              <input type="file" id="decrypt-file" accept=".pdf" style="display:none;">
 
               <div id="decrypt-card" style="display:none;">
                 <div class="compress-details">
@@ -1228,7 +1228,7 @@
               <p>点击或拖拽上传 PDF 文件</p>
               <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
             </div>
-            <input type="file" id="page-number-file" accept=".pdf">
+            <input type="file" id="page-number-file" accept=".pdf" style="display:none;">
 
             <div class="card" id="page-number-card" style="display:none;">
               <div class="compress-details">
@@ -1333,7 +1333,7 @@
                 <p>点击或拖拽上传签名图片（PNG/JPG）</p>
                 <p class="empty-hint">建议使用透明背景的PNG图片</p>
               </div>
-              <input type="file" id="sig-upload-file" accept="image/png,image/jpeg,image/jpg">
+              <input type="file" id="sig-upload-file" accept="image/png,image/jpeg,image/jpg" style="display:none;">
               <div id="sig-upload-preview" style="display:none;margin-top:1rem;text-align:center;">
                 <img id="sig-preview-img" style="max-width:300px;border:1px solid var(--border);border-radius:4px;">
                 <div style="margin-top:0.5rem;">
@@ -1356,7 +1356,7 @@
                 <p>点击或拖拽上传 PDF 文件</p>
                 <p class="empty-hint">支持 .pdf 格式</p>
               </div>
-              <input type="file" id="sig-pdf-file" accept=".pdf">
+              <input type="file" id="sig-pdf-file" accept=".pdf" style="display:none;">
 
               <div id="sig-pdf-card" style="display:none;">
                 <div class="compress-details">
@@ -1585,6 +1585,6 @@
     <button class="install-prompt-btn" id="install-btn">安装</button>
     <button class="install-prompt-dismiss" id="install-dismiss" aria-label="关闭">✕</button>
   </div>
-
+
 </body>
 </html>
