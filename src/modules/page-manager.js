@@ -51,14 +51,23 @@ export function initPageManager() {
     })
   }
   
-  document.getElementById('pm-rotate-cw').addEventListener('click', () => rotateSelected(90))
-  document.getElementById('pm-rotate-ccw').addEventListener('click', () => rotateSelected(-90))
-  document.getElementById('pm-delete').addEventListener('click', deleteSelected)
-  document.getElementById('pm-extract').addEventListener('click', extractSelected)
-  document.getElementById('pm-select-all').addEventListener('click', selectAll)
-  document.getElementById('pm-deselect-all').addEventListener('click', deselectAll)
-  document.getElementById('pm-save-btn').addEventListener('click', saveChanges)
-  document.getElementById('pm-close').addEventListener('click', () => {
+  const rotateCwBtn = document.getElementById('pm-rotate-cw')
+  const rotateCcwBtn = document.getElementById('pm-rotate-ccw')
+  const deleteBtn = document.getElementById('pm-delete')
+  const extractBtn = document.getElementById('pm-extract')
+  const selectAllBtn = document.getElementById('pm-select-all')
+  const deselectAllBtn = document.getElementById('pm-deselect-all')
+  const saveBtn = document.getElementById('pm-save-btn')
+  const closeBtn = document.getElementById('pm-close')
+  
+  if (rotateCwBtn) rotateCwBtn.addEventListener('click', () => rotateSelected(90))
+  if (rotateCcwBtn) rotateCcwBtn.addEventListener('click', () => rotateSelected(-90))
+  if (deleteBtn) deleteBtn.addEventListener('click', deleteSelected)
+  if (extractBtn) extractBtn.addEventListener('click', extractSelected)
+  if (selectAllBtn) selectAllBtn.addEventListener('click', selectAll)
+  if (deselectAllBtn) deselectAllBtn.addEventListener('click', deselectAll)
+  if (saveBtn) saveBtn.addEventListener('click', saveChanges)
+  if (closeBtn) closeBtn.addEventListener('click', () => {
     closeModal('page-manager')
     resetState()
   })

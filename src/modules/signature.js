@@ -56,12 +56,14 @@ export function initSignature() {
   initTabs()
   initRangeInputs()
   
-  document.getElementById('sig-close').addEventListener('click', () => {
+  const closeBtn = document.getElementById('sig-close')
+  const applyBtn = document.getElementById('sig-apply-btn')
+  
+  if (closeBtn) closeBtn.addEventListener('click', () => {
     closeModal('signature')
     resetState()
   })
-  
-  document.getElementById('sig-apply-btn').addEventListener('click', applySignature)
+  if (applyBtn) applyBtn.addEventListener('click', applySignature)
 }
 
 function initTabs() {
@@ -74,7 +76,8 @@ function initTabs() {
       document.querySelectorAll('.signature-panel').forEach(panel => {
         panel.style.display = 'none'
       })
-      document.getElementById(tabId).style.display = 'block'
+      const panel = document.getElementById(tabId)
+      if (panel) panel.style.display = 'block'
     })
   })
 }
@@ -124,12 +127,16 @@ function initDrawCanvas() {
     isDrawing = false
   })
   
-  document.getElementById('sig-clear-canvas').addEventListener('click', () => {
+  const clearBtn = document.getElementById('sig-clear-canvas')
+  const undoBtn = document.getElementById('sig-undo')
+  const saveBtn = document.getElementById('sig-save-to-library')
+  
+  if (clearBtn) clearBtn.addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     canvasHistory = []
   })
   
-  document.getElementById('sig-undo').addEventListener('click', () => {
+  if (undoBtn) undoBtn.addEventListener('click', () => {
     if (canvasHistory.length > 0) {
       canvasHistory.pop()
       if (canvasHistory.length > 0) {
@@ -145,7 +152,7 @@ function initDrawCanvas() {
     }
   })
   
-  document.getElementById('sig-save-to-library').addEventListener('click', () => {
+  if (saveBtn) saveBtn.addEventListener('click', () => {
     const dataURL = canvas.toDataURL('image/png')
     saveToLibrary(dataURL)
   })
@@ -159,7 +166,8 @@ function saveCanvasState() {
 function initUploadSignature() {
   setupUploadZone('sig-upload-zone', 'sig-upload-file', handleSignatureUpload)
   
-  document.getElementById('sig-save-upload-to-library').addEventListener('click', () => {
+  const saveUploadBtn = document.getElementById('sig-save-upload-to-library')
+  if (saveUploadBtn) saveUploadBtn.addEventListener('click', () => {
     if (signatureImageData) {
       saveToLibrary(signatureImageData)
     }
@@ -175,8 +183,10 @@ function handleSignatureUpload(file) {
   const reader = new FileReader()
   reader.onload = (e) => {
     signatureImageData = e.target.result
-    document.getElementById('sig-preview-img').src = signatureImageData
-    document.getElementById('sig-upload-preview').style.display = 'block'
+    const previewImg = document.getElementById('sig-preview-img')
+    const previewDiv = document.getElementById('sig-upload-preview')
+    if (previewImg) previewImg.src = signatureImageData
+    if (previewDiv) previewDiv.style.display = 'block'
     showStatus('sig-status', '签名图片已上传', 'success')
   }
   reader.readAsDataURL(file)
@@ -295,10 +305,15 @@ async function handlePDFUpload(file) {
     pdfTotalPages = pdfDoc.getPageCount()
     pdfFileName = file.name.replace('.pdf', '')
     
-    document.getElementById('sig-pdf-filename').textContent = file.name
-    document.getElementById('sig-pdf-pages').textContent = `${pdfTotalPages} 页`
-    document.getElementById('sig-pdf-card').style.display = 'block'
-    document.getElementById('sig-apply-btn').disabled = false
+    const filenameEl = document.getElementById('sig-pdf-filename')
+    const pagesEl = document.getElementById('sig-pdf-pages')
+    const cardEl = document.getElementById('sig-pdf-card')
+    const applyBtn = document.getElementById('sig-apply-btn')
+    
+    if (filenameEl) filenameEl.textContent = file.name
+    if (pagesEl) pagesEl.textContent = `${pdfTotalPages} 页`
+    if (cardEl) cardEl.style.display = 'block'
+    if (applyBtn) applyBtn.disabled = false
     
     showStatus('sig-status', '', 'success')
   } catch (error) {
@@ -311,9 +326,11 @@ function initRangeInputs() {
   ranges.forEach(id => {
     const input = document.getElementById(id)
     const display = document.getElementById(id + '-val')
-    input.addEventListener('input', (e) => {
-      display.textContent = id === 'sig-scale' ? e.target.value + '%' : e.target.value
-    })
+    if (input && display) {
+      input.addEventListener('input', (e) => {
+        display.textContent = id === 'sig-scale' ? e.target.value + '%' : e.target.value
+      })
+    }
   })
 }
 

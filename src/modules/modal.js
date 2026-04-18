@@ -19,6 +19,12 @@ const FUNCTION_NAMES = {
   img2pdf: '图片转PDF',
   watermark: '水印',
   'invoice-nup': '发票拼版',
+  redaction: '隐私遮盖',
+  pipeline: '工作流',
+  'page-manager': '页面管理',
+  encrypt: '加密/解密',
+  'page-number': '批量页码',
+  signature: '签名',
 }
 
 export function initModal() {
@@ -76,6 +82,13 @@ function bindPanelCloseButtons() {
     'img-close',
     'split-close',
     'wm-close',
+    'pm-close',
+    'encrypt-close',
+    'decrypt-close',
+    'pn-close',
+    'sig-close',
+    'redaction-close',
+    'pipeline-close',
   ]
 
   closeBtnIds.forEach(id => {

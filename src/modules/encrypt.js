@@ -48,14 +48,18 @@ export function initEncrypt() {
   setupUploadZone('encrypt-upload', 'encrypt-file', handleEncryptFileSelect)
   setupUploadZone('decrypt-upload', 'decrypt-file', handleDecryptFileSelect)
   
-  document.getElementById('encrypt-btn').addEventListener('click', encryptPdf)
-  document.getElementById('decrypt-btn').addEventListener('click', decryptPdf)
+  const encryptBtn = document.getElementById('encrypt-btn')
+  const decryptBtn = document.getElementById('decrypt-btn')
+  const encryptClose = document.getElementById('encrypt-close')
+  const decryptClose = document.getElementById('decrypt-close')
   
-  document.getElementById('encrypt-close').addEventListener('click', () => {
+  if (encryptBtn) encryptBtn.addEventListener('click', encryptPdf)
+  if (decryptBtn) decryptBtn.addEventListener('click', decryptPdf)
+  if (encryptClose) encryptClose.addEventListener('click', () => {
     closeModal('encrypt')
     resetEncryptState()
   })
-  document.getElementById('decrypt-close').addEventListener('click', () => {
+  if (decryptClose) decryptClose.addEventListener('click', () => {
     closeModal('encrypt')
     resetDecryptState()
   })
@@ -69,7 +73,8 @@ export function initEncrypt() {
       document.querySelectorAll('.encrypt-panel').forEach(panel => {
         panel.style.display = 'none'
       })
-      document.getElementById(tabId).style.display = 'block'
+      const panel = document.getElementById(tabId)
+      if (panel) panel.style.display = 'block'
     })
   })
 }

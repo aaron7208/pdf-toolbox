@@ -48,15 +48,21 @@ let pageNumberTotalPages = 0
 export function initPageNumber() {
   setupUploadZone('page-number-upload', 'page-number-file', handleFileSelect)
   
-  document.getElementById('pn-apply-btn').addEventListener('click', addPageNumbers)
-  document.getElementById('pn-close').addEventListener('click', () => {
+  const applyBtn = document.getElementById('pn-apply-btn')
+  const closeBtn = document.getElementById('pn-close')
+  const fontsizeInput = document.getElementById('pn-fontsize')
+  const fontsizeVal = document.getElementById('pn-fontsize-val')
+  
+  if (applyBtn) applyBtn.addEventListener('click', addPageNumbers)
+  if (closeBtn) closeBtn.addEventListener('click', () => {
     closeModal('page-number')
     resetState()
   })
-  
-  document.getElementById('pn-fontsize').addEventListener('input', (e) => {
-    document.getElementById('pn-fontsize-val').textContent = e.target.value
-  })
+  if (fontsizeInput && fontsizeVal) {
+    fontsizeInput.addEventListener('input', (e) => {
+      fontsizeVal.textContent = e.target.value
+    })
+  }
 }
 
 async function handleFileSelect(file) {
