@@ -28,6 +28,22 @@ export function initSplit() {
   // Buttons
   const splitBtn = document.getElementById('split-btn')
   const closeBtn = document.getElementById('split-close')
+  const splitEqualBtn = document.getElementById('split-equal-btn')
+  const splitOddEvenBtn = document.getElementById('split-odd-even-btn')
+
+  // Tab switching
+  document.querySelectorAll('.split-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.split-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      
+      const tabId = tab.dataset.tab
+      document.querySelectorAll('.split-panel').forEach(panel => {
+        panel.style.display = 'none'
+      })
+      document.getElementById(tabId).style.display = 'block'
+    })
+  })
 
   // Upload handlers
   uploadZone.addEventListener('click', () => fileInput.click())
@@ -140,6 +156,161 @@ export function initSplit() {
     fileInput.value = ''
     clearStatus(status)
   })
+
+  // Equal split functionality
+  const equalSplitValue = document.getElementById('split-equal-value')
+  const equalSplitMode = document.querySelectorAll('input[name="equal-split-mode"]')
+  const equalSplitPreview = document.getElementById('split-equal-preview')
+  const equalSplitLabel = document.getElementById('split-equal-label')
+
+  function updateEqualSplitPreview() {
+    if (!state.split.totalPages) return
+    const mode = document.querySelector('input[name="equal-split-mode"]:checked').value
+    const value = parseInt(equalSplitValue.value)
+    
+    if (mode === 'by-count') {
+      equalSplitLabel.textContent = '文件数量：'
+      const pagesPerFile = Math.floor(state.split.totalPages / value)
+      const remainder = state.split.totalPages % value
+      let text = `将生成 ${value} 个文件`
+      if (remainder === 0) {
+        text += `，每个 ${pagesPerFile} 页`
+      } else {
+        text += `，前 ${value - 1} 个各 ${pagesPerFile} 页，最后 1 个 ${pagesPerFile + remainder} 页`
+      }
+      equalSplitPreview.textContent = text
+    } else {
+      equalSplitLabel.textContent = '每份页数：'
+      const fileCount = Math.ceil(state.split.totalPages / value)
+      equalSplitPreview.textContent = `将生成 ${fileCount} 个文件，每个 ${value} 页（最后一个可能不足）`
+    }
+  }
+
+  if (equalSplitValue) equalSplitValue.addEventListener('input', updateEqualSplitPreview)
+  equalSplitMode.forEach(radio => radio.addEventListener('change', updateEqualSplitPreview))
+
+  if (splitEqualBtn) {
+    splitEqualBtn.addEventListener('click', async () => {
+      if (!state.split.pdfBytes) return
+      const mode = document.querySelector('input[name="equal-split-mode"]:checked').value
+      const value = parseInt(equalSplitValue.value)
+      
+      if (value < 2) {
+        showStatus(status, '数值必须大于等于 2', 'error')
+        return
+      }
+
+      try {
+        splitEqualBtn.disabled = true
+        showStatus(status, '正在分割...', 'info')
+        const startTime = performance.now()
+
+        const srcDoc = await PDFLib.PDFDocument.load(state.split.pdfBytes)
+        const totalPages = state.split.totalPages
+        const baseName = state.split.file.name.replace(/\.pdf$/i, '')
+        const zip = new JSZip()
+        let chunks = []
+
+        if (mode === 'by-count') {
+          const pagesPerFile = Math.floor(totalPages / value)
+          const remainder = totalPages % value
+          let startIndex = 0
+          for (let i = 0; i < value; i++) {
+            const pagesInThisChunk = pagesPerFile + (i === value - 1 ? remainder : 0)
+            chunks.push({ start: startIndex, count: pagesInThisChunk })
+            startIndex += pagesInThisChunk
+          }
+        } else {
+          for (let i = 0; i < totalPages; i += value) {
+            chunks.push({ start: i, count: Math.min(value, totalPages - i) })
+          }
+        }
+
+        for (let i = 0; i < chunks.length; i++) {
+          const { start, count } = chunks[i]
+          const pageIndices = Array.from({ length: count }, (_, j) => start + j)
+          const newDoc = await PDFLib.PDFDocument.create()
+          const copiedPages = await newDoc.copyPages(srcDoc, pageIndices)
+          copiedPages.forEach(page => newDoc.addPage(page))
+          const bytes = await newDoc.save()
+          zip.file(`${baseName}_第${i + 1}部分.pdf`, bytes)
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' })
+        downloadBlob(zipBlob, `${baseName}_等份分割.zip`, true)
+        cleanupResources()
+        trackEvent('file_downloaded', { function: 'split-equal', files: chunks.length, size: zipBlob.size })
+        const duration = performance.now() - startTime
+        showStatus(status, `✅ 成功分割为 ${chunks.length} 个文件！`, 'success')
+        showReport(status, {
+          fileName: state.split.file.name,
+          originalSize: state.split.file.size,
+          processedSize: zipBlob.size,
+          pageCount: totalPages,
+          fileCount: chunks.length,
+          duration,
+        })
+      } catch (err) {
+        showStatus(status, '❌ 分割失败: ' + err.message, 'error')
+      } finally {
+        splitEqualBtn.disabled = false
+      }
+    })
+  }
+
+  // Odd-Even split functionality
+  if (splitOddEvenBtn) {
+    splitOddEvenBtn.addEventListener('click', async () => {
+      if (!state.split.pdfBytes) return
+      try {
+        splitOddEvenBtn.disabled = true
+        showStatus(status, '正在分离奇偶页...', 'info')
+        const startTime = performance.now()
+
+        const srcDoc = await PDFLib.PDFDocument.load(state.split.pdfBytes)
+        const totalPages = state.split.totalPages
+        const baseName = state.split.file.name.replace(/\.pdf$/i, '')
+        const zip = new JSZip()
+
+        // Odd pages (1, 3, 5, ...)
+        const oddPages = Array.from({ length: Math.ceil(totalPages / 2) }, (_, i) => i * 2 + 1)
+        const oddDoc = await PDFLib.PDFDocument.create()
+        const oddCopied = await oddDoc.copyPages(srcDoc, oddPages.map(p => p - 1))
+        oddCopied.forEach(page => oddDoc.addPage(page))
+        const oddBytes = await oddDoc.save()
+        zip.file(`${baseName}_奇数页.pdf`, oddBytes)
+
+        // Even pages (2, 4, 6, ...)
+        if (totalPages >= 2) {
+          const evenPages = Array.from({ length: Math.floor(totalPages / 2) }, (_, i) => i * 2 + 2)
+          const evenDoc = await PDFLib.PDFDocument.create()
+          const evenCopied = await evenDoc.copyPages(srcDoc, evenPages.map(p => p - 1))
+          evenCopied.forEach(page => evenDoc.addPage(page))
+          const evenBytes = await evenDoc.save()
+          zip.file(`${baseName}_偶数页.pdf`, evenBytes)
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' })
+        downloadBlob(zipBlob, `${baseName}_奇偶分离.zip`, true)
+        cleanupResources()
+        trackEvent('file_downloaded', { function: 'split-odd-even', files: totalPages >= 2 ? 2 : 1, size: zipBlob.size })
+        const duration = performance.now() - startTime
+        showStatus(status, `✅ 奇偶页分离成功！`, 'success')
+        showReport(status, {
+          fileName: state.split.file.name,
+          originalSize: state.split.file.size,
+          processedSize: zipBlob.size,
+          pageCount: totalPages,
+          fileCount: totalPages >= 2 ? 2 : 1,
+          duration,
+        })
+      } catch (err) {
+        showStatus(status, '❌ 分离失败: ' + err.message, 'error')
+      } finally {
+        splitOddEvenBtn.disabled = false
+      }
+    })
+  }
 
   splitBtn.addEventListener('click', async () => {
     if (!state.split.pdfBytes || splitBtn.disabled) return

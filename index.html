@@ -527,27 +527,73 @@
           </div>
         </div>
 
-        <div class="split-preview" id="split-preview"></div>
+        <div class="split-tabs" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-outline split-tab active" data-tab="split-range-tab">📑 按范围</button>
+          <button class="btn btn-outline split-tab" data-tab="split-equal-tab">✂️ 等份分割</button>
+          <button class="btn btn-outline split-tab" data-tab="split-odd-even-tab">🔢 奇偶分离</button>
+        </div>
 
-        <div class="split-options">
-          <div class="img-option-group">
-            <label class="img-option-label" for="split-ranges">拆分方式：</label>
-            <div class="img-radio-group">
-              <label><input type="radio" name="split-mode" value="range" checked> 按页码范围</label>
-              <label><input type="radio" name="split-mode" value="every"> 每页单独拆分</label>
+        <div id="split-range-tab" class="split-panel">
+          <div class="split-preview" id="split-preview"></div>
+          <div class="split-options">
+            <div class="img-option-group">
+              <label class="img-option-label" for="split-ranges">拆分方式：</label>
+              <div class="img-radio-group">
+                <label><input type="radio" name="split-mode" value="range" checked> 按页码范围</label>
+                <label><input type="radio" name="split-mode" value="every"> 每页单独拆分</label>
+              </div>
+            </div>
+
+            <div class="img-option-group" id="split-range-group">
+              <label class="img-option-label" for="split-ranges">页码范围：</label>
+              <input type="text" id="split-ranges" class="img-text-input" placeholder="例如: 1-3,4-6,7-10">
+              <p class="split-hint">用逗号分隔多个范围，每个范围会生成一个独立的 PDF 文件</p>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" id="split-btn">拆分并下载</button>
             </div>
           </div>
+        </div>
 
-          <div class="img-option-group" id="split-range-group">
-            <label class="img-option-label" for="split-ranges">页码范围：</label>
-            <input type="text" id="split-ranges" class="img-text-input" placeholder="例如: 1-3,4-6,7-10">
-            <p class="split-hint">用逗号分隔多个范围，每个范围会生成一个独立的 PDF 文件</p>
+        <div id="split-equal-tab" class="split-panel" style="display:none;">
+          <div class="split-equal-options" style="margin:1rem 0;">
+            <div class="wm-option-group">
+              <label class="wm-option-label">分割方式：</label>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                <label style="display:flex;align-items:center;gap:8px;">
+                  <input type="radio" name="equal-split-mode" value="by-count" checked> 按文件数量（如分成 3 个文件）
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;">
+                  <input type="radio" name="equal-split-mode" value="by-pages"> 按每份页数（如每个文件 5 页）
+                </label>
+              </div>
+            </div>
+            <div class="wm-option-group" style="margin-top:12px;">
+              <label class="wm-option-label" for="split-equal-value">
+                <span id="split-equal-label">文件数量：</span>
+              </label>
+              <input type="number" id="split-equal-value" class="wm-text-input" value="2" min="2" style="width:100px;">
+            </div>
+            <div id="split-equal-preview" style="margin-top:12px;padding:12px;background:var(--bg-secondary);border-radius:8px;font-size:0.85rem;color:var(--text-secondary);"></div>
           </div>
-
           <div class="btn-group">
-            <button class="btn btn-primary" id="split-btn">拆分并下载</button>
-            <button class="btn btn-danger" id="split-close">✕ 关闭</button>
+            <button class="btn btn-primary" id="split-equal-btn">📦 分割并下载 ZIP</button>
           </div>
+        </div>
+
+        <div id="split-odd-even-tab" class="split-panel" style="display:none;">
+          <div style="margin:2rem 0;text-align:center;">
+            <p style="font-size:1.1rem;margin-bottom:1rem;">将 PDF 的奇数页和偶数页分别提取为两个文件</p>
+            <p style="color:var(--text-secondary);font-size:0.9rem;">奇数页：第 1、3、5...页 | 偶数页：第 2、4、6...页</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="split-odd-even-btn">🔢 分离并下载 ZIP</button>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:1rem;">
+          <button class="btn btn-danger" id="split-close">✕ 关闭</button>
         </div>
         <div id="split-status"></div>
       </div>
