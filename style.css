@@ -85,7 +85,11 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-  transition: background 0.3s, color 0.3s;
+}
+
+/* 主题切换时平滑过渡 */
+body, .modal-card, .card, .panel, .upload-zone, .feature-card, .header, .footer {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 /* ===== Dark Mode Toggle ===== */
