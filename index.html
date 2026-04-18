@@ -265,11 +265,6 @@
           <h3>页面管理</h3>
           <p>旋转、删除、排序、提取、倒序页面。</p>
         </div>
-        <div class="feature-card" data-modal="split" role="button" tabindex="0">
-          <div class="feature-icon">✂️</div>
-          <h3>拆分 PDF</h3>
-          <p>按范围/等份/奇偶页拆分 PDF。</p>
-        </div>
         <div class="feature-card" data-modal="encrypt" role="button" tabindex="0">
           <div class="feature-icon">🔐</div>
           <h3>加密/解密</h3>
@@ -595,6 +590,15 @@
         <div class="btn-group" style="margin-top:1rem;">
           <button class="btn btn-danger" id="split-close">✕ 关闭</button>
         </div>
+        
+        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:0.5rem;">💡 更多拆分选项：</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-outline" onclick="openModal('split-equal')" style="font-size:0.8rem;padding:4px 12px;">✂️ 等份分割</button>
+            <button class="btn btn-outline" onclick="openModal('odd-even-split')" style="font-size:0.8rem;padding:4px 12px;">🔢 奇偶页分离</button>
+          </div>
+        </div>
+        
         <div id="split-status"></div>
       </div>
     </div>
@@ -1267,6 +1271,18 @@
             <div class="btn-group" style="margin-top:1rem;">
               <button class="btn btn-danger" id="pm-close">✕ 关闭</button>
             </div>
+            
+            <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:0.5rem;">💡 更多页面操作：</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-outline" onclick="openModal('batch-extract')" style="font-size:0.8rem;padding:4px 12px;">📤 批量提取</button>
+                <button class="btn btn-outline" onclick="openModal('batch-delete')" style="font-size:0.8rem;padding:4px 12px;">🗑️ 批量删除</button>
+                <button class="btn btn-outline" onclick="openModal('batch-rotate')" style="font-size:0.8rem;padding:4px 12px;">🔄 批量旋转</button>
+                <button class="btn btn-outline" onclick="openModal('reverse-order')" style="font-size:0.8rem;padding:4px 12px;">🔃 倒序排列</button>
+                <button class="btn btn-outline" onclick="openModal('page-reorder')" style="font-size:0.8rem;padding:4px 12px;">🔀 页面重排</button>
+              </div>
+            </div>
+            
             <div id="page-manager-status"></div>
           </div>
         </div>
