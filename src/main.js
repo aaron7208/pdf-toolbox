@@ -20,6 +20,7 @@ import { initSearch } from './modules/search.js'
 import { initShortcuts } from './modules/shortcuts.js'
 import { initSignature } from './modules/signature.js'
 import { initRecentUsage } from './modules/recent-usage.js'
+import { initBatchExtract } from './modules/batch-extract.js'
 
 // Web Worker client
 import { initWorker } from './worker-client.js'
@@ -368,4 +369,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initShortcuts()
   initSignature()
   initRecentUsage()
+  initBatchExtract()
 })

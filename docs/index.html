@@ -138,7 +138,7 @@
     ]
   }
   </script>
-  <script type="module" crossorigin src="./assets/index.Bf8RYurn.js"></script>
+  <script type="module" crossorigin src="./assets/index.h-jFSeQJ.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index.D1uZ-iM6.css">
 <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
 <body>
@@ -280,6 +280,11 @@
           <div class="feature-icon">✍️</div>
           <h3>签名</h3>
           <p>手绘或上传签名图片到PDF。</p>
+        </div>
+        <div class="feature-card" data-modal="batch-extract" role="button" tabindex="0">
+          <div class="feature-icon">📤</div>
+          <h3>批量提取</h3>
+          <p>从 PDF 中提取多个页面为独立文件。</p>
         </div>
       </div>
     </section>
@@ -1401,6 +1406,57 @@
                 <div id="sig-status"></div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BATCH EXTRACT MODAL ===== -->
+    <div class="modal-overlay" id="modal-batch-extract" role="dialog" aria-modal="true">
+      <div class="modal-close" data-close-modal="batch-extract">✕</div>
+      <div class="modal-card">
+        <div class="panel" id="panel-batch-extract">
+          <div class="card">
+            <h2>📤 批量提取页面</h2>
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">从 PDF 中提取多个页面为独立的 PDF 文件，打包下载</p>
+            <div class="upload-zone" id="batch-extract-upload">
+              <div class="icon">📄</div>
+              <p>点击或拖拽上传 PDF 文件</p>
+              <p class="empty-hint">支持 .pdf 格式，建议不超过 50MB</p>
+            </div>
+            <input type="file" id="batch-extract-file" accept=".pdf" style="display:none;">
+          </div>
+
+          <div class="card" id="batch-extract-card" style="display:none;">
+            <div class="compress-details">
+              <div class="compress-row">
+                <span>📄 文件名：</span>
+                <span id="batch-extract-filename"></span>
+              </div>
+              <div class="compress-row">
+                <span>📑 总页数：</span>
+                <span id="batch-extract-pages"></span>
+              </div>
+              <div class="compress-row">
+                <span>✅ 已选择：</span>
+                <span id="batch-extract-selected">0 页</span>
+              </div>
+            </div>
+
+            <div class="batch-extract-toolbar" style="margin:1rem 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline" id="be-select-all">☑️ 全选</button>
+              <button class="btn btn-outline" id="be-deselect-all">☐ 取消全选</button>
+              <button class="btn btn-outline" id="be-invert-selection">🔄 反选</button>
+              <button class="btn btn-outline" id="be-select-range">🔢 选择范围</button>
+            </div>
+
+            <div class="page-grid" id="be-page-grid"></div>
+
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="be-extract-btn" disabled>📦 批量提取并下载 ZIP</button>
+              <button class="btn btn-danger" id="be-close">✕ 关闭</button>
+            </div>
+            <div id="batch-extract-status"></div>
           </div>
         </div>
       </div>
