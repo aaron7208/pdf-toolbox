@@ -43,6 +43,7 @@ export function initPipeline() {
   const batchResult = document.getElementById('pipeline-batch-result')
   const batchSummary = document.getElementById('pipeline-batch-summary')
   const batchDownloadBtn = document.getElementById('pipeline-batch-download-btn')
+  const closeBtn = document.getElementById('pipeline-close')
 
   // 初始化模板管理器
   const templateManager = createTemplateManager()
